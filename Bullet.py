@@ -11,8 +11,8 @@ class Bullet(GameObject):
         self.y_speed = 0
         self.objectID = objectID
         self.mediator = mediator
-        self.bullet_img = pygame.image.load('sprites/player/player_bullet.png')
-        self.bullet_img.set_colorkey((255,255,255))
+        self.bullet_img = pygame.image.load('sprites/player/player_bullet_small.png')
+        self.bullet_img.set_colorkey((253,77,211))
         self.player = player
         self.bullet_pos = player.get_player_position()
         self.start_speed()
@@ -20,15 +20,22 @@ class Bullet(GameObject):
 
     def start_speed(self):
         # 128 is half of the screen 
+
         if self.xInput > 128:
             self.x_speed += (self.xInput/128)*2 
         else:
-            self.x_speed -= (128/self.xInput)*2
+            print("hello")
+            self.x_speed -= ((128-self.xInput)/128)*4
 
 
 
         
-        self.y_speed -= (self.yInput)/48
+        if self.yInput > 144:
+            self.y_speed = -3
+        else:
+            self.y_speed -= ((144-self.yInput)/144)*8
+            if self.y_speed >= 6:
+                self.y_speed = 6
 
 
 

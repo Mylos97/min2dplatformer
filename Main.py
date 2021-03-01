@@ -29,7 +29,7 @@ while True:
         object.loop()
         object.draw()
     
-
+    mediator.all_game_entities = [object for object in mediator.all_game_entities if object not in mediator.to_be_removed]
 
     for event in pygame.event.get():
         if event.type == QUIT:

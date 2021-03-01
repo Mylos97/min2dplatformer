@@ -157,9 +157,10 @@ class Player(GameObject):
             self.moving_right = False
         mouse = pygame.mouse.get_pressed()
         
-        if mouse[0] == True and self.shooting_cooldown > 30:
+        if mouse[0] == True and self.shooting_cooldown > 4:
             self.shooting_cooldown = 0
             self.mousePos = pygame.mouse.get_pos()
+            print(self.mousePos)
             self.mediator.all_game_entities.append(Bullet(self.screen, self.mousePos[0], self.mousePos[1],'f_bullet', self.mediator, self))
 
         if keystate[pygame.K_w]:

@@ -1,5 +1,6 @@
 import pygame, sys
 from GameObject import *
+from Bullet import *
 
 class Player(GameObject):
 
@@ -98,6 +99,10 @@ class Player(GameObject):
    
     def get_player_scroll(self):
         return self.player_scroll
+    
+    def get_player_position(self):
+            self.playerPos = [self.player_rect.x  - self.player_scroll,self.player_rect.y]
+            return self.playerPos
 
     def draw(self):
         self.screen.blit(self.player_image,((self.player_rect.x - self.player_scroll), self.player_rect.y))
@@ -154,7 +159,8 @@ class Player(GameObject):
         
         if mouse[0] == True and self.shooting_cooldown > 30:
             self.shooting_cooldown = 0
-            print(pygame.mouse.get_pos())
+            self.mousePos = pygame.mouse.get_pos()
+            self.mediator.all_game_entities.append(Bullet(self.screen, self.mousePos[0], self.mousePos[1],'f_bullet', self.mediator, self))
 
         if keystate[pygame.K_w]:
             if self.air_timer < 6:
@@ -162,3 +168,5 @@ class Player(GameObject):
         
         if keystate[pygame.K_ESCAPE]:
             sys.exit()
+        
+        

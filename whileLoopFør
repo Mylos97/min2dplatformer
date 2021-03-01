@@ -1,0 +1,67 @@
+print(len(mediator.all_game_tiles))
+    player_scroll += (player_rect.x -player_scroll - 112)/10
+    player_scroll = int(player_scroll)
+
+    tile_rects.clear()
+    for i in range(0,len(map),1):
+        for j in range(0,len(map[0]),1): 
+            if map[i][j] == '1':
+                display.blit(ice_platform_middle, (j*tile_size-player_scroll,i*tile_size))
+            if map[i][j] == '2':
+                display.blit(ice_platform_left,(j*tile_size-player_scroll,i*tile_size))
+            if map[i][j] == '3':
+                display.blit(ice_platform_right,(j*tile_size-player_scroll, i*tile_size))
+            
+            if map[i][j] != '0':
+                tile_rects.append(pygame.Rect(j*tile_size,i*tile_size,tile_size,tile_size))
+    
+
+
+
+    player_movement = [0,0]
+
+    if moving_right == True:
+        player_movement[0] += 2
+    if moving_left == True:
+        player_movement[0] -= 2
+
+    player_movement[1] += player_speed_y
+    player_speed_y += 0.2
+
+    if player_speed_y > 6:
+        player_speed_y = 6
+
+    
+    player_rect, collions = move(player_rect,player_movement,tile_rects)
+
+    if collions['bottom']:
+        player_speed_y = 0
+        air_timer = 0
+    else:
+        air_timer += 1
+    
+    if collions['top']:
+        player_speed_y = 0.2
+    
+    
+    display.blit(player_image,(player_rect.x-player_scroll,player_rect.y))
+
+
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == KEYDOWN:
+            if event.key == K_RIGHT:
+                moving_right = True
+            if event.key == K_LEFT:
+                moving_left = True
+            if event.key == K_SPACE:
+                if air_timer < 6:
+                    player_speed_y = -5
+        if event.type == KEYUP:
+            if event.key == K_RIGHT:
+                moving_right = False
+            if event.key == K_LEFT:
+                moving_left = False
+        

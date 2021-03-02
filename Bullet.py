@@ -45,9 +45,13 @@ class Bullet(GameObject):
                 self.y_speed = 6
         
 
+    def get_bullet_rect(self):
+        return self.bullet_rect
         
         
-        
+    
+
+
     def loop(self):
         
         self.y_speed += 0.25

@@ -10,5 +10,6 @@ class GameObject:
     def loop(self):
         pass
 
-    def getObjectID():
+    def getObjectID(self):
         return self.objectID
+    

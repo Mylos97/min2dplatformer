@@ -167,6 +167,11 @@ class Player(GameObject):
             if self.air_timer < 6:
                     self.player_speed_y = -5
         
+        if keystate[pygame.K_SPACE]:
+            self.player_speed_y -= 1
+            if self.player_speed_y < -2:
+                self.player_speed_y = -2
+
         if keystate[pygame.K_ESCAPE]:
             sys.exit()
         

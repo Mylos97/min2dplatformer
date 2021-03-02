@@ -2,6 +2,7 @@ import pygame, sys
 from GameObject import * 
 from Mediator import *
 from Player import *
+from Enemy import *
 
 class GameMap(GameObject):
     
@@ -17,6 +18,7 @@ class GameMap(GameObject):
         self.objectID = objectID
         self.mediator = mediator
         self.player = player
+        self.load_enemy()
 
 
     def load_map(self, path):
@@ -30,6 +32,12 @@ class GameMap(GameObject):
         
         return game_map
     
+    def load_enemy(self):
+        for i in range(0,len(self.map)):
+            for j in range(0,len(self.map[0])): 
+                if self.map[i][j] == 'E':
+                    self.mediator.all_game_entities.append(Enemy(self.screen,j*self.tile_size,i*self.tile_size, 'enemy', self.mediator, self.player))
+
     ## Add player scroll
     def draw_map(self):
         
@@ -43,7 +51,7 @@ class GameMap(GameObject):
                 if self.map[i][j] == '3':
                     self.screen.blit(self.ice_platform_right,(j * self.tile_size - self.player.get_player_scroll(), i * self.tile_size))
 
-                if self.map[i][j] != '0':
+                if self.map[i][j] != '0' and self.map[i][j] != 'E':
                     self.mediator.all_game_tiles.append(pygame.Rect(j * self.tile_size , i * self.tile_size, self.tile_size, self.tile_size))
     
 

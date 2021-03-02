@@ -63,6 +63,8 @@ class Bullet(GameObject):
         for tile in self.mediator.all_game_tiles:
             
             if self.bullet_rect.colliderect(tile) and self.air_timer > 1:
+                self.bullet_pos[1] -= self.y_speed
+
                 self.air_timer = 0
                 self.bullet_bounce += 1
 
@@ -84,6 +86,8 @@ class Bullet(GameObject):
 
         for tile in self.mediator.all_game_tiles:
             if self.bullet_rect.colliderect(tile) and self.air_timer > 1:
+                self.bullet_pos[0] -= self.x_speed
+
                 print("i collide")
                 self.air_timer = 0
                 self.x_speed *= -1

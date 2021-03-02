@@ -33,7 +33,6 @@ while True:
     mediator.all_game_entities = [object for object in mediator.all_game_entities if object not in mediator.to_be_removed]
     mediator.to_be_removed.clear()
 
-
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()

@@ -24,8 +24,11 @@ class Player(GameObject):
 
         self.player_rects_moving = [pygame.Rect(20,147,9,13),pygame.Rect(35,146,11,13),pygame.Rect(52,147,9,13)]
         self.player_images_moving = self.ss.images_at(self.player_rects_moving)
-        self.animation_timer_moving = 0
+        self.animation_timer_moving_right = 0
+        self.animation_timer_moving_int_right = 0
 
+        self.animation_timer_moving_left = 0
+        self.animation_timer_moving_int_left = 0
 
 
 
@@ -41,27 +44,26 @@ class Player(GameObject):
         self.shooting_cooldown = 0
 
 
-    
-    def update_player_scroll(self):
-        self.player_scroll += (player_rect.x -player_scroll - 112)/10
-        self.player_scroll = int(player_scroll)
-    
+
 
     def loop(self):
         self.player_movement = [0,0]
 
-        self.player_scroll += (self.player_rect.x -self.player_scroll - 112)/4
+
+        ## Player scroll must be used in almost all classes ##
+        self.player_scroll += (self.player_rect.x -self.player_scroll - 120)/4
         self.player_scroll = int(self.player_scroll)
 
         self.shooting_cooldown += 1
 
+        ## x movement ##
         if self.moving_right == True:
             self.player_movement[0] += 2
         if self.moving_left == True:
             self.player_movement[0] -= 2
         
 
-
+        ## y movement ##
         self.player_movement[1] += self.player_speed_y
         self.player_speed_y += 0.2
         
@@ -69,34 +71,56 @@ class Player(GameObject):
             self.player_speed_y = 6
 
 
+        ## Collion function ##
         self.player_rect, collions = self.move(self.player_rect, self.player_movement, self.mediator.all_game_tiles)
 
+        ## Check for collions bottom ##
         if collions['bottom']:
             self.player_speed_y = 0
             self.air_timer = 0
-            self.player_showing_image = self.player_image
         else:
             self.air_timer += 1
 
     
-    
+        ## Check for hitting head ##
         if collions['top']:
             self.player_speed_y = 0.2
 
+        
+
+
+        ## Moving right animation ##
+        if self.moving_right == True and self.air_timer < 6:
+            self.animation_timer_moving_right += 1
+
+            self.animation_timer_moving_right %= 6
+
+            if self.animation_timer_moving_right%6 == 0:
+                self.animation_timer_moving_int_right += 1
+
+                if self.animation_timer_moving_int_right > 2:
+                    self.animation_timer_moving_int_right = 0
+
+            
+            self.player_showing_image = self.player_images_moving[self.animation_timer_moving_int_right]   
+        
+        ## Moving left animations ##
+        if self.moving_left == True and self.air_timer < 6:
+            self.animation_timer_moving_left += 1
+
+            self.animation_timer_moving_left %= 6
+
+            if self.animation_timer_moving_left%6 == 0:
+                self.animation_timer_moving_int_left += 1
+
+                if self.animation_timer_moving_int_left > 2:
+                    self.animation_timer_moving_int_left = 0
+            self.player_showing_image = pygame.transform.flip(self.player_images_moving[self.animation_timer_moving_int_left],True,False)
+
+
+        ## Falling Down ##
         if self.player_speed_y > 3:
                 self.player_showing_image = self.player_images_jump[1]
-
-
-        if self.moving_right == True:
-            self.animation_timer_moving += 1
-
-            if self.animation_timer_moving >= 23:
-                self.animation_timer_moving = 0
-            print(8%self.animation_timer_moving)
-            self.player_showing_image = self.player_images_moving[8%self.animation_timer_moving]
-    
-
-
 
         self.player_input()
 
@@ -155,6 +179,8 @@ class Player(GameObject):
         return rect, collision_types
     
     def player_input(self):
+
+        ## Move left or right ##
         self.player_speed_x = 0
         keystate = pygame.key.get_pressed()
         if keystate[pygame.K_a]:
@@ -167,6 +193,8 @@ class Player(GameObject):
             self.moving_right = False
         mouse = pygame.mouse.get_pressed()
         
+
+        ## Shooting ##
         if mouse[0] == True and self.shooting_cooldown > 4:
             self.shooting_cooldown = 0
             self.mousePos = pygame.mouse.get_pos()

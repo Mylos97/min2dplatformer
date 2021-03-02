@@ -1,16 +1,34 @@
 import pygame, sys
 from GameObject import *
 from Bullet import *
+from SpriteSheet import *
+
 
 class Player(GameObject):
+
 
     def __init__(self, screen, objectID, mediator):
         self.screen = screen
         self.objectID = objectID
         self.mediator = mediator
+        
+        self.ss = SpriteSheet('sprites/sprite_sheet.png')
 
-        self.player_image = pygame.image.load('sprites/player/player_mock_img.png')
+
+        self.player_image = self.ss.image_at(pygame.Rect(20,147,9,13))
         self.player_image.set_colorkey((253,77,211))
+        self.player_showing_image = self.player_image
+
+        self.player_rects_jump = [pygame.Rect(17, 194,14,13), pygame.Rect(35, 194,11,13)]
+        self.player_images_jump = self.ss.images_at(self.player_rects_jump)
+
+        self.player_rects_moving = [pygame.Rect(20,147,9,13),pygame.Rect(35,146,11,13),pygame.Rect(52,147,9,13)]
+        self.player_images_moving = self.ss.images_at(self.player_rects_moving)
+        self.animation_timer_moving = 0
+
+
+
+
         self.player_location = [100,100]
         self.player_speed_x = 4
         self.player_speed_y = 0
@@ -56,45 +74,37 @@ class Player(GameObject):
         if collions['bottom']:
             self.player_speed_y = 0
             self.air_timer = 0
+            self.player_showing_image = self.player_image
         else:
             self.air_timer += 1
+
+    
     
         if collions['top']:
             self.player_speed_y = 0.2
 
-        
+        if self.player_speed_y > 3:
+                self.player_showing_image = self.player_images_jump[1]
 
-        self.player_input()
-
-    def loopv2(self):
-        self.player_movement = [0,0]
 
         if self.moving_right == True:
-            self.player_movement[0] += 2
-        if self.moving_left == True:
-            self.player_movement[0] -= 2
-        
-        self.player_movement[1] += self.player_speed_y
-        self.player_speed_y += 0.2
+            self.animation_timer_moving += 1
 
-        if self.player_speed_y > 6:
-            self.player_speed_y = 6
-        
-        self.player_rect, collions = self.move(self.player_rect,self.player_movement, self.mediator.all_game_tiles)
-
-        if collions['bottom']:
-            self.player_speed_y = 0
-            self.air_timer = 0
-        else:
-            self.air_timer += 1
+            if self.animation_timer_moving >= 23:
+                self.animation_timer_moving = 0
+            print(8%self.animation_timer_moving)
+            self.player_showing_image = self.player_images_moving[8%self.animation_timer_moving]
     
-        if collions['top']:
-            self.player_speed_y = 0.2
-        
-        self.player_scroll += (self.player_rect.x - self.player_scroll - 96)
-        self.player_scroll = int(self.player_scroll)
+
+
 
         self.player_input()
+
+
+
+
+
+
 
    
     def get_player_scroll(self):
@@ -105,7 +115,7 @@ class Player(GameObject):
             return self.playerPos
 
     def draw(self):
-        self.screen.blit(self.player_image,((self.player_rect.x - self.player_scroll), self.player_rect.y))
+        self.screen.blit(self.player_showing_image,((self.player_rect.x - self.player_scroll), self.player_rect.y))
     
 
     def collision_test(self):
@@ -165,6 +175,7 @@ class Player(GameObject):
 
         if keystate[pygame.K_w]:
             if self.air_timer < 6:
+                    self.player_showing_image = self.player_images_jump[0]
                     self.player_speed_y = -5
         
         if keystate[pygame.K_SPACE]:

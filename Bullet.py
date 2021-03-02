@@ -29,8 +29,8 @@ class Bullet(GameObject):
     def start_speed(self):
         # 128 is half of the screen 
 
-        if self.xInput > 126:
-            self.x_speed += (self.xInput/256)*4 
+        if self.xInput > 128:
+            self.x_speed += ((self.xInput-128)/128)*4 
             self.bullet_pos[0] += 6
         else:
             self.x_speed -= ((128-self.xInput)/128)*4
@@ -49,9 +49,7 @@ class Bullet(GameObject):
         
         
     def loop(self):
-        self.bullet_pos[0] += self.x_speed
-
-
+        
         self.y_speed += 0.25
         
         if self.y_speed > 6:
@@ -60,28 +58,40 @@ class Bullet(GameObject):
         self.bullet_pos[1] += self.y_speed
 
         self.bullet_rect = pygame.Rect(self.bullet_pos[0],self.bullet_pos[1], self.bullet_img.get_width(),self.bullet_img.get_height())
-        
 
-        self.air_timer += 1
+
         for tile in self.mediator.all_game_tiles:
             
-            if self.bullet_rect.colliderect(tile) and self.air_timer > 8:
+            if self.bullet_rect.colliderect(tile) and self.air_timer > 1:
                 self.air_timer = 0
                 self.bullet_bounce += 1
 
-                if self.bullet_bounce > 2:
+                if self.bullet_bounce > 1:
                     self.mediator.to_be_removed.append(self)
                 
                 if self.bullet_bounce == 1:
                     self.y_speed *= -1 
-                    self.y_speed += 2 
-                else:
-                    self.y_speed *= -1 
-                    self.y_speed += 4
-
+                    self.y_speed += 1 
+                
 
                 if self.y_speed < -12:
                     self.y_speed = -12
+        
+        self.bullet_pos[0] += self.x_speed
+        self.air_timer += 1
+
+        self.bullet_rect = pygame.Rect(self.bullet_pos[0],self.bullet_pos[1], self.bullet_img.get_width(),self.bullet_img.get_height())
+
+        for tile in self.mediator.all_game_tiles:
+            if self.bullet_rect.colliderect(tile) and self.air_timer > 1:
+                print("i collide")
+                self.air_timer = 0
+                self.x_speed *= -1
+                self.bullet_bounce += 1
+
+            if self.bullet_bounce > 1:
+                    self.mediator.to_be_removed.append(self)
+
 
 
     def draw(self):

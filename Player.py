@@ -69,6 +69,10 @@ class Player(GameObject):
             self.player_movement[0] -= 2
             self.last_direction = 'left'
         
+        self.player_rect, collions = self.object_check_collision_tiles(self.player_rect, self.player_movement)
+
+        self.player_movement = [0,0]
+
 
         ## y movement ##
         self.player_movement[1] += self.player_speed_y
@@ -79,7 +83,7 @@ class Player(GameObject):
 
 
         ## Collion function ##
-        self.player_rect, collions = self.move(self.player_rect, self.player_movement, self.mediator.all_game_tiles)
+        self.player_rect, collions = self.object_check_collision_tiles(self.player_rect, self.player_movement)
 
         ## Check for collions bottom ##
         if collions['bottom']:
@@ -169,41 +173,6 @@ class Player(GameObject):
         self.screen.blit(self.player_showing_image,((self.player_rect.x - self.player_scroll), self.player_rect.y))
     
 
-    def collision_test(self):
-        hit_list = []
-        for tile in self.mediator.all_game_tiles:
-            if self.player_rect.colliderect(tile):
-                hit_list.append(tile)
-
-        return hit_list
-
-    def move(self, rect, movement, tiles):
-        collision_types = {'top': False, 'bottom': False, 'right': False, 'left': False}
-
-
-        rect.x += movement[0]
-        hit_list = self.collision_test()
-
-        for tile in hit_list:
-            if movement[0] > 0:
-                rect.right = tile.left
-                collision_types['right'] = True
-            if movement[0] < 0:
-                rect.left = tile.right
-                collision_types['left'] = True
-        
-        rect.y += movement[1]
-        hit_list = self.collision_test()
-
-        for tile in hit_list:
-            if movement[1] > 0:
-                rect.bottom = tile.top
-                collision_types['bottom'] = True
-            if movement[1] < 0:
-                rect.top = tile.bottom
-                collision_types['top'] = True
-
-        return rect, collision_types
     
     def player_input(self):
 

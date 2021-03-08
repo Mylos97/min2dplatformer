@@ -37,9 +37,14 @@ class Player(GameObject):
         self.player_speed_y = 0
         self.player_movement = [0,0]
         self.player_rect = pygame.Rect(self.player_location[0],self.player_location[1],self.player_image.get_width(),self.player_image.get_height())
+        
         self.air_timer = 0
+        self.idle_timer = 0
         self.moving_right = False
         self.moving_left = False
+        self.last_direction = ''
+
+
         self.player_scroll = 0
         self.shooting_cooldown = 0
 
@@ -47,20 +52,22 @@ class Player(GameObject):
 
 
     def loop(self):
+        self.idle_timer += 1
         self.player_movement = [0,0]
 
 
-        ## Player scroll must be used in almost all classes ##
-        self.player_scroll += (self.player_rect.x -self.player_scroll - 120)/4
-        self.player_scroll = int(self.player_scroll)
-
+        
         self.shooting_cooldown += 1
 
         ## x movement ##
         if self.moving_right == True:
+            self.idle_timer = 0
             self.player_movement[0] += 2
+            self.last_direction = 'right'
         if self.moving_left == True:
+            self.idle_timer = 0
             self.player_movement[0] -= 2
+            self.last_direction = 'left'
         
 
         ## y movement ##
@@ -79,6 +86,7 @@ class Player(GameObject):
             self.player_speed_y = 0
             self.air_timer = 0
         else:
+            self.idle_timer = 0
             self.air_timer += 1
 
     
@@ -87,6 +95,9 @@ class Player(GameObject):
             self.player_speed_y = 0.2
 
         
+        ## Player scroll must be used in almost all classes ##
+        self.player_scroll += (self.player_rect.x -self.player_scroll - 128)
+        self.player_scroll = int(self.player_scroll)
 
 
         ## Moving right animation ##
@@ -118,19 +129,35 @@ class Player(GameObject):
             self.player_showing_image = pygame.transform.flip(self.player_images_moving[self.animation_timer_moving_int_left],True,False)
 
 
-        ## Falling Down ##
-        if self.player_speed_y > 3:
-                self.player_showing_image = self.player_images_jump[1]
+        ## Falling Down Left and Right ##
+        if self.player_speed_y > 2.5 and self.moving_right:
+            self.idle_timer = 0
+            self.player_showing_image = self.player_images_jump[1]
+
+        if self.player_speed_y > 2.5 and self.moving_left:
+            self.idle_timer = 0
+            self.player_showing_image =  pygame.transform.flip(self.player_images_jump[1],True,False)
+
+
+        ## Player stop image left and right
+        if self.last_direction == 'right' and self.idle_timer > 2:
+            self.player_showing_image = self.player_image
+        elif self.last_direction == 'left' and self.idle_timer > 2:
+            self.player_showing_image = pygame.transform.flip(self.player_image,True,False)
+
+
+        ## Player jump left and right 
+        
+        if self.moving_right and self.player_speed_y < 0:
+            self.player_showing_image = self.player_images_jump[0]
+        elif self.moving_left and self.player_speed_y < 0:
+            self.player_showing_image = pygame.transform.flip(self.player_images_jump[0],True,False)
 
         self.player_input()
 
 
 
 
-
-
-
-   
     def get_player_scroll(self):
         return self.player_scroll
     
@@ -201,10 +228,13 @@ class Player(GameObject):
             print(self.mousePos)
             self.mediator.all_game_entities.append(Bullet(self.screen, self.mousePos[0], self.mousePos[1],'f_bullet', self.mediator, self))
 
+        ## Jump with animation left and right
         if keystate[pygame.K_w]:
             if self.air_timer < 6:
-                    self.player_showing_image = self.player_images_jump[0]
                     self.player_speed_y = -5
+                    
+
+
         
         if keystate[pygame.K_SPACE]:
             self.player_speed_y -= 1

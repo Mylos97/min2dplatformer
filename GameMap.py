@@ -38,20 +38,27 @@ class GameMap(GameObject):
                 if self.map[i][j] == 'E':
                     self.mediator.all_game_entities.append(Enemy(self.screen,j*self.tile_size,i*self.tile_size, 'enemy', self.mediator, self.player))
 
-    ## Add player scroll
+    ## Add player scroll 0,len(self.map[0])
     def draw_map(self):
+        render_distance_left = int((self.player.get_player_scroll()-16)/16)
+        render_distance_right = int((self.player.get_player_scroll()/16)*16)
         
+        if render_distance_right > len(self.map[0]):
+            render_distance_right = len(self.map[0])
 
         for i in range(0,len(self.map)):
-            for j in range(0,len(self.map[0])): 
+            for j in range(render_distance_left,render_distance_right):
                 if self.map[i][j] == '1':
                     self.screen.blit(self.ice_platform_middle, (j * self.tile_size - self.player.get_player_scroll(), i * self.tile_size))
                 if self.map[i][j] == '2':
                     self.screen.blit(self.ice_platform_left,(j * self.tile_size - self.player.get_player_scroll(), i * self.tile_size))
                 if self.map[i][j] == '3':
                     self.screen.blit(self.ice_platform_right,(j * self.tile_size - self.player.get_player_scroll(), i * self.tile_size))
+                
+                if self.map[i][j] == 'X':
+                    self.mediator.all_boundry_tiles.append(pygame.Rect(j * self.tile_size , i * self.tile_size, self.tile_size, self.tile_size))
 
-                if self.map[i][j] != '0' and self.map[i][j] != 'E':
+                elif self.map[i][j] != '0' and self.map[i][j] != 'E':
                     self.mediator.all_game_tiles.append(pygame.Rect(j * self.tile_size , i * self.tile_size, self.tile_size, self.tile_size))
     
 

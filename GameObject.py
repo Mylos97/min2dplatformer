@@ -54,5 +54,8 @@ class GameObject:
 
         return hit_list
 
-
+    def check_boundary(self, rect):
+        for tile in self.mediator.all_boundry_tiles:
+            if rect.colliderect(tile):
+                return True
     

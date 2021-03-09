@@ -101,8 +101,8 @@ class Player(GameObject):
         
         ## Player scroll must be used in almost all classes ##
         self.player_scroll += (self.player_rect.x -self.player_scroll - 128)
-        self.player_scroll = int(self.player_scroll)
-
+        if self.player_scroll <= 16:
+            self.player_scroll = 16
 
         ## Moving right animation ##
         if self.moving_right == True and self.air_timer < 6:
@@ -166,7 +166,7 @@ class Player(GameObject):
         return self.player_scroll
     
     def get_player_position(self):
-            self.playerPos = [self.player_rect.x  - self.player_scroll,self.player_rect.y]
+            self.playerPos = [self.player_rect.x - self.player_scroll,self.player_rect.y]
             return self.playerPos
 
     def draw(self):

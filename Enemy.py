@@ -37,6 +37,9 @@ class Enemy(GameObject):
         if collisions['left'] or collisions['right']:
             self.enemy_speed[0] *= -1
 
+        if self.check_boundary(self.enemy_rect):
+            self.enemy_speed[0] *= -1
+
         self.enemy_health_rect_red = pygame.Rect(self.enemy_rect.x - self.player.get_player_scroll() + 1, self.enemy_rect.y - 11, 14, 2)
         self.enemy_health_rect_green = pygame.Rect(self.enemy_rect.x -self.player.get_player_scroll() + 1, self.enemy_rect.y - 11, (self.enemy_health/100)*14, 2)
 
@@ -50,6 +53,8 @@ class Enemy(GameObject):
         
         if self.enemy_health <= 0:
             self.mediator.to_be_removed.append(self)
+
+        
 
         
 

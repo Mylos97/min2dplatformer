@@ -4,7 +4,7 @@ class SpriteSheet(object):
 
     def __init__(self, filename):
         try:
-            self.sheet = pygame.image.load('sprites/sprite_sheet.png')
+            self.sheet = pygame.image.load(filename)
         except pygame.error:
             print('unable to load sprite sheet: ')
             raise SystemExit

@@ -42,6 +42,7 @@ class Player(GameObject):
         self.idle_timer = 0
         self.moving_right = False
         self.moving_left = False
+        self.running = False
         self.last_direction = ''
 
 
@@ -62,11 +63,20 @@ class Player(GameObject):
         ## x movement ##
         if self.moving_right == True:
             self.idle_timer = 0
-            self.player_movement[0] += 2
+            if self.running:
+                self.player_movement[0] += 1.5
+            else:
+                self.player_movement[0] += 1
+
             self.last_direction = 'right'
+            
         if self.moving_left == True:
             self.idle_timer = 0
-            self.player_movement[0] -= 2
+            if self.running:
+                self.player_movement[0] -= 1.5
+            else:
+                self.player_movement[0] -= 1
+
             self.last_direction = 'left'
         
         self.player_rect, collions = self.object_check_collision_tiles(self.player_rect, self.player_movement)
@@ -203,8 +213,11 @@ class Player(GameObject):
                     self.player_speed_y = -5
                     
 
+        if keystate[pygame.K_LSHIFT]:
+            self.running = True
+        else:
+            self.running = False
 
-        
         if keystate[pygame.K_SPACE]:
             self.player_speed_y -= 1
             if self.player_speed_y < -2:

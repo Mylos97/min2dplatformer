@@ -15,7 +15,9 @@ class GameObject:
 
     def get_damage(self):
         pass
-
+    
+    def get_rect(self):
+        pass
     
 
     def object_check_collision_tiles(self, rect, movement):
@@ -60,7 +62,27 @@ class GameObject:
                 return True
     
 
+
     def on_screen(self, rect , player):
-        if rect.x - player.get_player_scroll() > -16 and rect.x - player.get_player_scroll() < 256:
+        if rect.x - player.get_player_scroll() > - 16 and rect.x - player.get_player_scroll() < 256:
             return True
+
+        return False
+
+    def get_collision_bullet(self, rect):
+
+        for object in self.mediator.all_game_entities:
+                if object.getObjectID() == 'f_bullet':
+                    if rect.colliderect(object.get_rect()):
+                        self.mediator.to_be_removed.append(object)
+                        return True
+
+        return False
+
+    def get_collision_entities(self, rect, ID):
+        for object in self.mediator.all_game_entities:
+            if object.getObjectID() == ID:
+                if rect.colliderect(object.get_rect()):
+                    return True
+
         return False

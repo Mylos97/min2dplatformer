@@ -50,12 +50,9 @@ class Bullet(GameObject):
                 self.bullet_speed[1] = 6
         
 
-    def get_bullet_rect(self):
+    def get_rect(self):
         return self.bullet_rect
         
-        
-    
-
 
     def loop(self):
         self.bullet_speed[1] += 0.2
@@ -75,11 +72,9 @@ class Bullet(GameObject):
         if self.bullet_bounce > 2:
             self.bullet_img = self.ss.image_at(pygame.Rect(146,286,8,8))
             self.mediator.to_be_removed.append(self)
-
-
-
-
-
+        
+        if self.bullet_rect.y > 250:
+            self.mediator.to_be_removed.append(self)
 
 
     def draw(self):

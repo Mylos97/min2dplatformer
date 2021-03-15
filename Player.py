@@ -39,9 +39,12 @@ class Player(GameObject):
         self.player_speed_y = 0
         self.player_movement = [0,0]
         self.player_rect = pygame.Rect(self.player_location[0],self.player_location[1],self.player_image.get_width(),self.player_image.get_height())
-        
+        self.player_health = 100
+
+
         self.air_timer = 0
         self.idle_timer = 0
+        self.player_damage_cooldown = 0
         self.moving_right = False
         self.moving_left = False
         self.running = False
@@ -56,6 +59,7 @@ class Player(GameObject):
 
     def loop(self):
         self.idle_timer += 1
+        self.player_damage_cooldown += 1
         self.player_movement = [0,0]
 
 
@@ -86,6 +90,7 @@ class Player(GameObject):
         
         self.player_rect, collions = self.object_check_collision_tiles(self.player_rect, self.player_movement)
 
+
         self.player_movement = [0,0]
 
 
@@ -112,10 +117,15 @@ class Player(GameObject):
         ## Check for hitting head ##
         if collions['top']:
             self.player_speed_y = 0.2
-
         
+        
+        if self.get_collision_entities(self.player_rect, 'enemy') and self.player_damage_cooldown > 6:
+            self.player_damage_cooldown = 0
+            self.player_health -= 10
+
+
         ## Player scroll must be used in almost all classes ##
-        self.player_scroll += (self.player_rect.x -self.player_scroll - 128)
+        self.player_scroll += (self.player_rect.x - self.player_scroll - 128)
         if self.player_scroll <= 16:
             self.player_scroll = 16
 
@@ -208,7 +218,6 @@ class Player(GameObject):
         if mouse[0] == True and self.shooting_cooldown > 4:
             self.shooting_cooldown = 0
             self.mousePos = pygame.mouse.get_pos()
-            print(self.mousePos)
             self.mediator.all_game_entities.append(Bullet(self.screen, self.mousePos[0], self.mousePos[1],'f_bullet', self.mediator, self))
 
         ## Jump with animation left and right

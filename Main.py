@@ -4,6 +4,7 @@ from pygame.locals import *
 from Player import *
 from Mediator import *
 from GameMap import *
+from HUD import *
 pygame.init()
 
 WINDOW_SIZE = (1024,768)
@@ -14,16 +15,18 @@ screen = pygame.display.set_mode(WINDOW_SIZE,0,32)
 display = pygame.Surface((256,192))
 
 mediator = Mediator()
-player = Player(display,'player',mediator)
+player = Player(display, 'player', mediator)
 mediator.all_game_entities.append(player)
-gameMap = GameMap(display,'tiles',mediator,player)
 
+gameMap = GameMap(display, 'tiles', mediator, player)
+hud = HUD(display,player)
 
 
 while True:
     display.fill((57, 138, 215))
     mediator.all_game_tiles.clear()
     gameMap.draw_map()
+    hud.draw_overlay()
 
     for object in mediator.all_game_entities:
         object.loop()

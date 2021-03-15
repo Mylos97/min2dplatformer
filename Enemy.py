@@ -28,10 +28,11 @@ class Enemy(GameObject):
 
 
     
-
+    def get_rect(self):
+        return self.enemy_rect
     
     def loop(self):
-        print(self.player.get_player_scroll())
+
         if self.on_screen(self.enemy_rect, self.player):
             self.enemy_speed[1] += 0.2
 
@@ -51,11 +52,8 @@ class Enemy(GameObject):
 
 
 
-            for object in self.mediator.all_game_entities:
-                if object.getObjectID() == 'f_bullet':
-                    if self.enemy_rect.colliderect(object.get_bullet_rect()):
-                        self.enemy_health -= 10
-                        self.mediator.to_be_removed.append(object)
+            if self.get_collision_bullet(self.enemy_rect):
+                self.enemy_health -= 10
             
             if self.enemy_health <= 0:
                 self.mediator.to_be_removed.append(self)

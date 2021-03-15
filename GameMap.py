@@ -38,17 +38,19 @@ class GameMap(GameObject):
                 if self.map[i][j] == 'E':
                     self.mediator.all_game_entities.append(Enemy (self.screen , j*self.tile_size, i*self.tile_size, 'enemy', self.mediator, self.player))
 
-    ## Add player scroll 0,len(self.map[0])
     
     def draw_map(self):
+        ## Calculate left and right render distance
         render_distance_left = int((self.player.get_player_scroll()-16)/16)
         render_distance_right = int((self.player.get_player_scroll()/16)*18)
         
+        ## Make sure the index does not go out of bounds
         if render_distance_right > len(self.map[0]):
             render_distance_right = len(self.map[0])
 
         for i in range(0,len(self.map)):
             for j in range(render_distance_left,render_distance_right):
+                ## Check for what tile that needs to be rendered
                 if self.map[i][j] == '1':
                     self.screen.blit(self.ice_platform_middle, (j * self.tile_size - self.player.get_player_scroll(), i * self.tile_size))
                 if self.map[i][j] == '2':

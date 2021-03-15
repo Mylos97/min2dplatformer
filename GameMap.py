@@ -36,12 +36,13 @@ class GameMap(GameObject):
         for i in range(0,len(self.map)):
             for j in range(0,len(self.map[0])): 
                 if self.map[i][j] == 'E':
-                    self.mediator.all_game_entities.append(Enemy(self.screen,j*self.tile_size,i*self.tile_size, 'enemy', self.mediator, self.player))
+                    self.mediator.all_game_entities.append(Enemy (self.screen , j*self.tile_size, i*self.tile_size, 'enemy', self.mediator, self.player))
 
     ## Add player scroll 0,len(self.map[0])
+    
     def draw_map(self):
         render_distance_left = int((self.player.get_player_scroll()-16)/16)
-        render_distance_right = int((self.player.get_player_scroll()/16)*16)
+        render_distance_right = int((self.player.get_player_scroll()/16)*18)
         
         if render_distance_right > len(self.map[0]):
             render_distance_right = len(self.map[0])

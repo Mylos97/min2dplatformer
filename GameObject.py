@@ -59,3 +59,8 @@ class GameObject:
             if rect.colliderect(tile):
                 return True
     
+
+    def on_screen(self, rect , player):
+        if rect.x - player.get_player_scroll() > -16 and rect.x - player.get_player_scroll() < 256:
+            return True
+        return False

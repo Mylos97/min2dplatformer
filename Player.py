@@ -33,7 +33,9 @@ class Player(GameObject):
 
 
         self.player_location = [100,100]
-        self.player_speed_x = 4
+        self.player_accel_x_right = 0
+        self.player_accel_x_left = 0
+
         self.player_speed_y = 0
         self.player_movement = [0,0]
         self.player_rect = pygame.Rect(self.player_location[0],self.player_location[1],self.player_image.get_width(),self.player_image.get_height())
@@ -63,17 +65,20 @@ class Player(GameObject):
         ## x movement ##
         if self.moving_right == True:
             self.idle_timer = 0
+
             if self.running:
-                self.player_movement[0] += 1.5
+                self.player_movement[0] += 2
             else:
                 self.player_movement[0] += 1
 
             self.last_direction = 'right'
-            
+
+    
+
         if self.moving_left == True:
             self.idle_timer = 0
             if self.running:
-                self.player_movement[0] -= 1.5
+                self.player_movement[0] -= 2
             else:
                 self.player_movement[0] -= 1
 
@@ -171,7 +176,6 @@ class Player(GameObject):
 
 
 
-
     def get_player_scroll(self):
         return self.player_scroll
     
@@ -213,10 +217,11 @@ class Player(GameObject):
                     self.player_speed_y = -5
                     
 
-        if keystate[pygame.K_LSHIFT]:
+        if keystate[pygame.K_LSHIFT] or keystate[pygame.K_RSHIFT]:
             self.running = True
         else:
             self.running = False
+
 
         if keystate[pygame.K_SPACE]:
             self.player_speed_y -= 1

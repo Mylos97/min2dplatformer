@@ -44,10 +44,12 @@ class Player(GameObject):
 
         self.air_timer = 0
         self.idle_timer = 0
+        self.collions_timer = 0
         self.player_damage_cooldown = 0
         self.moving_right = False
         self.moving_left = False
         self.running = False
+        self.jumping = False
         self.last_direction = ''
 
 
@@ -58,11 +60,10 @@ class Player(GameObject):
 
 
     def loop(self):
+        collions = {'top': False, 'bottom': False, 'right': False, 'left': False}
         self.idle_timer += 1
         self.player_damage_cooldown += 1
         self.player_movement = [0,0]
-
-
         
         self.shooting_cooldown += 1
 
@@ -88,37 +89,43 @@ class Player(GameObject):
 
             self.last_direction = 'left'
         
-        self.player_rect, collions = self.object_check_collision_tiles(self.player_rect, self.player_movement)
 
+        
+        self.player_rect, collions = self.object_check_collision_tiles(self.player_rect, self.player_movement)
+        
 
         self.player_movement = [0,0]
 
 
         ## y movement ##
         self.player_movement[1] += self.player_speed_y
-        self.player_speed_y += 0.2
+        self.player_speed_y += 0.3
         
         if self.player_speed_y > 6:
             self.player_speed_y = 6
 
 
         ## Collion function ##
+        
         self.player_rect, collions = self.object_check_collision_tiles(self.player_rect, self.player_movement)
-
+       
+            
         ## Check for collions bottom ##
+        
         if collions['bottom']:
             self.player_speed_y = 0
             self.air_timer = 0
+            self.jumping = False
         else:
             self.idle_timer = 0
             self.air_timer += 1
 
-    
+
         ## Check for hitting head ##
         if collions['top']:
             self.player_speed_y = 0.2
         
-        
+
         if self.get_collision_entities(self.player_rect, 'enemy') and self.player_damage_cooldown > 6:
             self.player_damage_cooldown = 0
             self.player_health -= 10
@@ -221,10 +228,14 @@ class Player(GameObject):
             self.mediator.all_game_entities.append(Bullet(self.screen, self.mousePos[0], self.mousePos[1],'f_bullet', self.mediator, self))
 
         ## Jump with animation left and right
-        if keystate[pygame.K_w]:
-            if self.air_timer < 6:
-                    self.player_speed_y = -5
-                    
+        if keystate[pygame.K_w] and self.air_timer < 8:
+            self.player_speed_y -= 1
+            self.jumping = True
+        elif keystate[pygame.K_w] and self.air_timer < 20 and self.jumping:
+            self.player_speed_y -= 0.3
+        
+        if self.player_speed_y < -2:
+            self.player_speed_y = -2
 
         if keystate[pygame.K_LSHIFT] or keystate[pygame.K_RSHIFT]:
             self.running = True
@@ -239,5 +250,4 @@ class Player(GameObject):
 
         if keystate[pygame.K_ESCAPE]:
             sys.exit()
-        
-        
+            
